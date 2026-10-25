@@ -17,6 +17,12 @@ def build_parser() -> argparse.ArgumentParser:
     g.add_argument("file")
     g.add_argument("--N", default="None", help="длина; None или N<=0 — до прерывания (Ctrl+C)")
     g.add_argument("--seed", type=int, default=None)
+    pr = t1s.add_parser("prob", help="режим 2: точная вероятность и частотная оценка")
+    pr.add_argument("file")
+    pr.add_argument("--N", required=True, help="длина реализации, N > 0")
+    pr.add_argument("--seq", required=True,
+                    help="последовательность a1..ar: строка символов или символы через запятую")
+    pr.add_argument("--seed", type=int, default=None)
     sub.add_parser("t2", help="задача 1.2: равномерное кодирование")
     sub.add_parser("t3", help="задача 1.3: архиватор zmh")
     return p

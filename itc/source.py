@@ -2,6 +2,7 @@
 import json
 import random
 from fractions import Fraction
+from math import lcm
 
 from .errors import InputError
 from .probs import parse_dist, Sampler
@@ -49,6 +50,45 @@ class Source:
         self.components = components  # список (вес, Component)
         self.alphabet = sorted(set().union(*(m.alphabet() for _, c in components
                                              for m in c.models.values())))
+
+    @property
+    def period(self):
+        return lcm(*(c.L for _, c in self.components))
+
+    # ---------- точные вероятности ----------
+    @staticmethod
+    def _comp_prob_at(comp, seq, j):
+        """Pr{X_{j+1} = a_1, ..., X_{j+r} = a_r} для одной компоненты.
+        Прямой проход по состояниям «последние order символов»: для источника
+        без памяти состояние одно (пустое) и проход вырождается в произведение."""
+        d = comp.order
+        states = {(): Fraction(1)}
+        for t in range(j):  # маргинализуем символы до позиции j
+            if d == 0:
+                break
+            nxt = {}
+            for h, p in states.items():
+                for sym, ps in comp.tick_dist(t, h).items():
+                    nh = (h + (sym,))[-d:]
+                    nxt[nh] = nxt.get(nh, Fraction(0)) + p * ps
+            states = nxt
+        total = Fraction(0)
+        for h, p in states.items():
+            for i, a in enumerate(seq):
+                if p == 0:
+                    break
+                p *= comp.tick_dist(j + i, h).get(a, Fraction(0))
+                if d:
+                    h = (h + (a,))[-d:]
+            total += p
+        return total
+
+    def prob_at(self, seq, j=0):
+        return sum((w * self._comp_prob_at(c, seq, j) for w, c in self.components), Fraction(0))
+
+    def prob_period_avg(self, seq):
+        P = self.period
+        return sum((self.prob_at(seq, j) for j in range(P)), Fraction(0)) / P
 
     # ---------- генерация ----------
     def generate(self, rng):
