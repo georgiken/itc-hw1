@@ -65,6 +65,8 @@ run("main.py t1 prob tests/t1/ext_markov_ergodic.json --N 10000 --seq aa --seed 
 for sd in (0, 1):
     run(f"main.py t1 prob tests/t1/ext_nonergodic_mixture.json --N 10000 --seq a --seed {sd}",
         "неэргодический источник: предел частоты зависит от реализации")
+run("main.py t1 prob tests/t1/degenerate_one_symbol.json --N 1000 --seq " + "a" * 150,
+    "последовательность длиннее 100: строка N = 100 пропускается")
 run("main.py t1 prob tests/t1/variant.json --N 0 --seq ab")
 run("main.py t1 prob tests/t1/variant.json --N 100 --seq az --seed 1")
 
@@ -82,6 +84,10 @@ run(f"main.py t2 code tests/t2/stationary.json --R 2.3 --out {OUT}/stationary.co
     "R чуть больше H: n0 существует, но за пределами n_max = 50")
 run(f"main.py t2 code tests/t2/uniform5.json --R 2.4 --nmax 5 --out {OUT}/c.json", "R > log2 k")
 run(f"main.py t2 code tests/t1/degenerate_one_symbol.json --R 0 --nmax 3 --out {OUT}/c.json")
+run(f"main.py t2 code tests/t2/skewed.json --R 2.000001 --nmax 30 --out {OUT}/c.json",
+    "R с длинной десятичной записью")
+run(f"main.py t2 code tests/t2/skewed.json --R 2 --q 4 --nmax 10 --out {OUT}/c.json",
+    "q — степень двойки: l(n) = floor(nR/2) точно")
 run("main.py t2 code tests/t1/variant.json --R 2")
 run("main.py t2 code tests/t2/skewed.json --R -1")
 run("main.py t2 code tests/t2/skewed.json --R 2 --q 1")

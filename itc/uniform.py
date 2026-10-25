@@ -64,16 +64,21 @@ from math import comb, lcm, log2
 
 
 def code_length(n, R: Fraction, q):
-    """l(n) = floor(nR / log2 q) — точно: наибольшее l с q^l <= 2^(nR),
-    т.е. q^(l*den) <= 2^(n*num) для R = num/den."""
-    num, den = R.numerator, R.denominator
-    rhs = 2 ** (n * num)
-    l = int(n * float(R) / log2(q)) + 1
-    while l > 0 and q ** (l * den) > rhs:
-        l -= 1
-    while q ** ((l + 1) * den) <= rhs:
-        l += 1
-    return l
+    """l(n) = floor(nR / log2 q) без ошибок округления.
+    q = 2^m: log2 q = m, считаем floor(nR/m) в дробях точно.
+    Иначе log2 q иррационален, nR/log2 q не бывает целым (при R > 0), и хватает
+    сравнения с 60 верными знаками (Decimal); float здесь мог бы ошибиться на 1
+    вблизи целого."""
+    if R == 0:
+        return 0
+    if q & (q - 1) == 0:
+        x = n * R / (q.bit_length() - 1)
+        return x.numerator // x.denominator
+    from decimal import Decimal, localcontext
+    with localcontext() as ctx:
+        ctx.prec = 60
+        x = Decimal(n * R.numerator) / Decimal(R.denominator) / (Decimal(q).ln() / Decimal(2).ln())
+        return int(x)  # x > 0, int() отбрасывает дробную часть = floor
 
 
 def _types(n, lp):
@@ -132,10 +137,11 @@ def best_set(n, M, syms, probs):
     need, mass, chosen = M, 0, []
     i, T = 0, len(order)
     while need > 0 and i < T:
-        j = i + 1  # группа почти равных ключей досортировывается точно
-        ki = keys[order[i]]
-        tol = 1e-9 * max(1.0, abs(ki))
-        while j < T and ki - keys[order[j]] <= tol:
+        # группа: цепочка соседних ключей, отличающихся не больше чем на tol;
+        # внутри неё порядок восстанавливается точно по целым числителям
+        j = i + 1
+        tol = 1e-9 * max(1.0, abs(keys[order[i]]))
+        while j < T and keys[order[j - 1]] - keys[order[j]] <= tol:
             j += 1
         group = [(exact(types[t]), types[t]) for t in order[i:j]]
         if j - i > 1:

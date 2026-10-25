@@ -23,8 +23,12 @@ def run(args):
         rng = make_rng(args.seed)
         j = src.joiner()
         gen = src.generate(rng)
-        if N is not None and N > 0:
-            print(j.join(itertools.islice(gen, N)))
+        if N is not None and N > 0:  # выдача блоками: память не растёт с N
+            left = N
+            while left:
+                k = min(left, 1 << 16)
+                left -= k
+                sys.stdout.write(j.join(itertools.islice(gen, k)) + (j if left else "\n"))
             return 0
         try:  # бесконечная выдача до Ctrl+C (SIGINT)
             while True:
@@ -76,7 +80,7 @@ def run_prob(src, args):
     # одна реализация длины max(N, 10^6); оценки для меньших N — по её префиксам
     total = max(N, TABLE_N[-1])
     xs = list(itertools.islice(src.generate(make_rng(args.seed)), total))
-    marks = sorted(set(TABLE_N) | {N})
+    marks = sorted(m for m in set(TABLE_N) | {N} if m >= r)  # при N < r оценки нет
     counts = {}
     c = 0
     mi = 0
