@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# --- начало сгенерированного фрагмента (Claude, см. SOURCES.md) ---
 """Прогон собственных тестов. Пишет RESULTS.md с дословным выводом программы."""
 import os
 import shlex
@@ -136,3 +137,4 @@ bad = [s for s in sections if not isinstance(s, str) and s[2] not in (None, 0, 2
 print(f"RESULTS.md записан; запусков: {sum(1 for s in sections if not isinstance(s, str) and s[2] is not None)}; "
       f"аварийных: {len(bad)}")
 sys.exit(1 if bad else 0)
+# --- конец сгенерированного фрагмента ---

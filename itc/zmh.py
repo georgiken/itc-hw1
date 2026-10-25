@@ -1,3 +1,4 @@
+# --- начало сгенерированного фрагмента (Claude, см. SOURCES.md) ---
 """Задача 1.3: контейнер zmh, двухпроходное сжатие Хаффманом и восстановление.
 
 Формат (все числа big-endian):
@@ -225,3 +226,4 @@ def decompress(src_path, dst_path):
     except OSError as e:
         raise InputError(f"не удалось записать {dst_path}: {e.strerror}") from None
     return h
+# --- конец сгенерированного фрагмента ---

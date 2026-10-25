@@ -1,3 +1,4 @@
+# --- начало сгенерированного фрагмента (Claude, см. SOURCES.md) ---
 """CRC-32 (IEEE 802.3, отражённый полином 0xEDB88320), табличный вариант."""
 
 _TABLE = []
@@ -14,3 +15,4 @@ def crc32(data: bytes, crc: int = 0) -> int:
     for b in data:
         crc = t[(crc ^ b) & 0xFF] ^ (crc >> 8)
     return crc ^ 0xFFFFFFFF
+# --- конец сгенерированного фрагмента ---

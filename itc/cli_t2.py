@@ -1,3 +1,4 @@
+# --- начало сгенерированного фрагмента (Claude, см. SOURCES.md) ---
 """CLI задачи 1.2."""
 import json
 import time
@@ -120,3 +121,4 @@ def run_code(src, args):
         raise InputError(f"не удалось записать {out}: {e.strerror}") from None
     print(f"описание кода для n = {n} записано в {out}")
     return 0
+# --- конец сгенерированного фрагмента ---

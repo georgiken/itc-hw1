@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# --- начало сгенерированного фрагмента (Claude, см. SOURCES.md) ---
 """Точка входа. Все режимы запускаются неинтерактивно: см. README.md."""
 import argparse
 import sys
@@ -88,3 +89,4 @@ def main(argv=None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+# --- конец сгенерированного фрагмента ---

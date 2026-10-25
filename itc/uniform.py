@@ -1,3 +1,4 @@
+# --- начало сгенерированного фрагмента (Claude, см. SOURCES.md) ---
 """Задача 1.2: равномерное кодирование стационарного источника без памяти."""
 import math
 from fractions import Fraction
@@ -149,3 +150,4 @@ def best_set(n, M, syms, probs):
                 break
         i = j
     return 1 - Fraction(mass, D ** n), chosen
+# --- конец сгенерированного фрагмента ---

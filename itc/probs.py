@@ -1,3 +1,4 @@
+# --- начало сгенерированного фрагмента (Claude, см. SOURCES.md) ---
 """Точная рациональная арифметика: разбор вероятностей и выборка по дробям."""
 from fractions import Fraction
 from math import lcm
@@ -58,3 +59,4 @@ class Sampler:
             else:
                 lo = mid + 1
         return self.keys[lo]
+# --- конец сгенерированного фрагмента ---

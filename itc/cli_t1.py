@@ -1,3 +1,4 @@
+# --- начало сгенерированного фрагмента (Claude, см. SOURCES.md) ---
 """CLI задачи 1.1."""
 import itertools
 import sys
@@ -101,3 +102,4 @@ def run_prob(src, args):
             continue
         print(f"{n:>8}  {fn:>12.6e}  {abs(fn - float(p1)):>12.6e}  {abs(fn - float(pavg)):>12.6e}")
     return 0
+# --- конец сгенерированного фрагмента ---

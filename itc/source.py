@@ -1,3 +1,4 @@
+# --- начало сгенерированного фрагмента (Claude, см. SOURCES.md) ---
 """Задача 1.1: описание дискретного источника, валидация, генерация."""
 import json
 import random
@@ -237,3 +238,4 @@ def load_source(path) -> Source:
 
 def make_rng(seed):
     return random.Random(seed)
+# --- конец сгенерированного фрагмента ---
