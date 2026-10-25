@@ -34,7 +34,16 @@ def build_parser() -> argparse.ArgumentParser:
     cd.add_argument("--q", default=None, help="мощность алфавита кодера (по умолчанию из варианта)")
     cd.add_argument("--nmax", default="50")
     cd.add_argument("--out", default=None, help="файл описания кода (по умолчанию <file>.code.json)")
-    sub.add_parser("t3", help="задача 1.3: архиватор zmh")
+    t3 = sub.add_parser("t3", help="задача 1.3: архиватор zmh")
+    t3s = t3.add_subparsers(dest="mode", required=True)
+    z = t3s.add_parser("compress", help="сжатие: <file> -> <file>.zmh")
+    z.add_argument("file")
+    z.add_argument("-o", "--out", default=None)
+    z.add_argument("--stats", action="store_true", help="вывести H, средняя длина, размеры, коэффициент")
+    x = t3s.add_parser("decompress", help="восстановление: <file>.zmh -> <file>")
+    x.add_argument("file")
+    x.add_argument("-o", "--out", default=None)
+    x.add_argument("--force", action="store_true", help="перезаписать существующий файл")
     return p
 
 
@@ -53,7 +62,10 @@ def run(argv) -> int:
     if args.task == "t2":
         from itc import cli_t2
         return cli_t2.run(args)
-    raise InputError(f"режим {args.task} ещё не реализован")
+    if args.task == "t3":
+        from itc import cli_t3
+        return cli_t3.run(args)
+    raise InputError(f"режим {args.task} не реализован")
 
 
 def main(argv=None) -> int:
