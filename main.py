@@ -27,6 +27,13 @@ def build_parser() -> argparse.ArgumentParser:
     t2s = t2.add_subparsers(dest="mode", required=True)
     c = t2s.add_parser("check", help="режим 1: проверка и энтропия")
     c.add_argument("file")
+    cd = t2s.add_parser("code", help="режим 2: таблица P_e(n), минимальное n, описание кода")
+    cd.add_argument("file")
+    cd.add_argument("--R", required=True, help="скорость, бит на символ (дробь или десятичная)")
+    cd.add_argument("--eps", default=None, help="граница ошибки (по умолчанию из варианта)")
+    cd.add_argument("--q", default=None, help="мощность алфавита кодера (по умолчанию из варианта)")
+    cd.add_argument("--nmax", default="50")
+    cd.add_argument("--out", default=None, help="файл описания кода (по умолчанию <file>.code.json)")
     sub.add_parser("t3", help="задача 1.3: архиватор zmh")
     return p
 
