@@ -1,11 +1,9 @@
-# --- начало сгенерированного фрагмента (Claude, см. SOURCES.md) ---
-"""CLI задачи 1.3."""
 import os
 
 from .errors import InputError
 from .zmh import compress, decompress
 
-
+# --- начало сгенерированного фрагмента (Claude, см. SOURCES.md) ---
 def run(args):
     if args.mode == "compress":
         out = args.out or args.file + ".zmh"

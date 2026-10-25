@@ -1,5 +1,3 @@
-# --- начало сгенерированного фрагмента (Claude, см. SOURCES.md) ---
-"""CLI задачи 1.2."""
 import json
 import time
 from fractions import Fraction
@@ -59,7 +57,7 @@ def run_code(src, args):
         raise InputError("eps должно быть в [0, 1]")
     q = _int_arg(args.q if args.q is not None else vp["q"], "q", 2)
     nmax = _int_arg(args.nmax, "nmax", 1)
-    # символы нулевой вероятности в оптимальное множество не попадают — отбрасываем
+    # символы нулевой вероятности в оптимальное множество не попадают,  поэтому отбрасываем
     items = sorted(((s, p) for s, p in dist.items() if p > 0), key=lambda t: (-t[1], t[0]))
     syms = [s for s, _ in items]
     probs = [p for _, p in items]
@@ -121,4 +119,3 @@ def run_code(src, args):
         raise InputError(f"не удалось записать {out}: {e.strerror}") from None
     print(f"описание кода для n = {n} записано в {out}")
     return 0
-# --- конец сгенерированного фрагмента ---
