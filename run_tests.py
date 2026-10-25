@@ -88,7 +88,7 @@ run("main.py t2 code tests/t2/skewed.json --R 2 --q 1")
 
 section("## Задача 1.3. Сжатие, --stats, восстановление")
 files = [("text_ru.txt", "текст на русском"), ("text_en.txt", "текст на английском"),
-         ("image.jpg", "изображение JPEG"), ("repeat.bin", "повтор одного байта"),
+         ("image.png", "изображение PNG"), ("repeat.bin", "повтор одного байта"),
          ("empty.bin", "пустой файл"), ("two_bytes.bin", "два символа"),
          ("random.bin", "случайные байты")]
 for f, what in files:
