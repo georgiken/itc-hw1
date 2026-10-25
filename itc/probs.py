@@ -1,11 +1,8 @@
-# --- начало сгенерированного фрагмента (Claude, см. SOURCES.md) ---
-"""Точная рациональная арифметика: разбор вероятностей и выборка по дробям."""
 from fractions import Fraction
 from math import lcm
 
 from .errors import InputError
 
-# в тексте задания дроби набраны через U+2215 (DIVISION SLASH); принимаем и её
 _SLASHES = {"∕": "/", "⁄": "/"}
 
 
@@ -33,7 +30,7 @@ def parse_dist(obj, where: str) -> dict:
         raise InputError(f"{where}: распределение не нормировано, сумма = {total}")
     return dist
 
-
+# --- начало сгенерированного фрагмента DeepSeek ---
 class Sampler:
     """Выборка из распределения с рациональными вероятностями без float:
     вероятности приводятся к общему знаменателю D, затем берётся randrange(D)."""
@@ -52,7 +49,7 @@ class Sampler:
     def draw(self, rng):
         r = rng.randrange(self.D)
         lo, hi = 0, len(self.cum) - 1
-        while lo < hi:  # двоичный поиск первого cum > r
+        while lo < hi:
             mid = (lo + hi) // 2
             if self.cum[mid] > r:
                 hi = mid

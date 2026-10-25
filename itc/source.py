@@ -1,5 +1,4 @@
-# --- начало сгенерированного фрагмента (Claude, см. SOURCES.md) ---
-"""Задача 1.1: описание дискретного источника, валидация, генерация."""
+# --- начало сгенерированного фрагмента DeepSeek ---
 import json
 import random
 from fractions import Fraction
