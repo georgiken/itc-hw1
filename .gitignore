@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc
 *.zmh
+!tests/t3/*.zmh
 *.out
 tests/out/
