@@ -23,7 +23,10 @@ def build_parser() -> argparse.ArgumentParser:
     pr.add_argument("--seq", required=True,
                     help="последовательность a1..ar: строка символов или символы через запятую")
     pr.add_argument("--seed", type=int, default=None)
-    sub.add_parser("t2", help="задача 1.2: равномерное кодирование")
+    t2 = sub.add_parser("t2", help="задача 1.2: равномерное кодирование")
+    t2s = t2.add_subparsers(dest="mode", required=True)
+    c = t2s.add_parser("check", help="режим 1: проверка и энтропия")
+    c.add_argument("file")
     sub.add_parser("t3", help="задача 1.3: архиватор zmh")
     return p
 
@@ -40,6 +43,9 @@ def run(argv) -> int:
     if args.task == "t1":
         from itc import cli_t1
         return cli_t1.run(args)
+    if args.task == "t2":
+        from itc import cli_t2
+        return cli_t2.run(args)
     raise InputError(f"режим {args.task} ещё не реализован")
 
 
