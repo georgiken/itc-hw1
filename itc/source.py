@@ -117,11 +117,53 @@ class Source:
 
 
 # ---------- разбор ----------
+def _is_markov(d):
+    return isinstance(d, dict) and "contexts" in d and "order" in d
+
+
+def _parse_ctx(key, where):
+    if not isinstance(key, str):
+        raise InputError(f"{where}: ключ контекста должен быть строкой")
+    return () if key == "" else tuple(x.strip() for x in key.split(","))
+
+
+def _parse_model(name, d):
+    where = f"models[{name!r}]"
+    if not _is_markov(d):
+        return Model(name, 0, {(): parse_dist(d, where)})
+    order = d["order"]
+    if not isinstance(order, int) or isinstance(order, bool) or order < 1:
+        raise InputError(f"{where}: order должен быть целым >= 1")
+    ctxs = d["contexts"]
+    if not isinstance(ctxs, dict) or not ctxs:
+        raise InputError(f"{where}: contexts — ожидается непустой объект")
+    table = {}
+    for key, dist in ctxs.items():
+        ctx = _parse_ctx(key, where)
+        if len(ctx) > order:
+            raise InputError(f"{where}: контекст {key!r} длиннее order = {order}")
+        if ctx in table:
+            raise InputError(f"{where}: контекст {key!r} задан дважды")
+        table[ctx] = parse_dist(dist, f"{where}.contexts[{key!r}]")
+    return Model(name, order, table)
+
+
 def _parse_models(obj):
     if not isinstance(obj, dict) or not obj:
         raise InputError("models: ожидается непустой объект")
-    return {name: Model(name, 0, {(): parse_dist(d, f"models[{name!r}]")})
-            for name, d in obj.items()}
+    return {name: _parse_model(name, d) for name, d in obj.items()}
+
+
+def _check_contexts(models, alphabet):
+    """Каждая марковская модель обязана знать распределение для любой
+    предыстории длины 0..order над алфавитом компоненты."""
+    import itertools
+    for m in models.values():
+        for n in range(m.order + 1):
+            for ctx in itertools.product(sorted(alphabet), repeat=n):
+                if ctx not in m.table:
+                    raise InputError(f"models[{m.name!r}]: нет контекста {','.join(ctx)!r} "
+                                     f"(нужны все контексты длины 0..{m.order})")
 
 
 def _parse_component(obj, where="источник"):
@@ -149,11 +191,35 @@ def _parse_component(obj, where="источник"):
     for s in src:
         if not isinstance(s, str) or s not in switches:
             raise InputError(f"source: несуществующий переключатель {s!r}")
+    alphabet = set().union(*(m.alphabet() for m in models.values()))
+    _check_contexts(models, alphabet)
     return Component(models, switches, list(src))
 
 
 def parse_source(obj) -> Source:
-    return Source([(Fraction(1), _parse_component(obj))])
+    """Расширенный формат (см. SPEC.md): либо описание исходного формата
+    (модели могут быть марковскими), либо {"mixture": [{"weight", "source"}, ...]}."""
+    if not isinstance(obj, dict):
+        raise InputError("описание источника должно быть JSON-объектом")
+    if "mixture" not in obj:
+        return Source([(Fraction(1), _parse_component(obj))])
+    mix = obj["mixture"]
+    if not isinstance(mix, list) or not mix:
+        raise InputError("mixture: ожидается непустой список компонент")
+    from .probs import parse_prob
+    comps = []
+    for i, item in enumerate(mix):
+        where = f"mixture[{i}]"
+        if not isinstance(item, dict) or "weight" not in item or "source" not in item:
+            raise InputError(f"{where}: ожидается объект с полями weight и source")
+        if isinstance(item["source"], dict) and "mixture" in item["source"]:
+            raise InputError(f"{where}: вложенная смесь не допускается")
+        comps.append((parse_prob(item["weight"], f"{where}.weight"),
+                      _parse_component(item["source"], where)))
+    total = sum(w for w, _ in comps)
+    if total != 1:
+        raise InputError(f"mixture: веса не нормированы, сумма = {total}")
+    return Source(comps)
 
 
 def load_source(path) -> Source:
