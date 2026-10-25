@@ -1,5 +1,3 @@
-# --- начало сгенерированного фрагмента (Claude, см. SOURCES.md) ---
-"""CLI задачи 1.1."""
 import itertools
 import sys
 
@@ -23,14 +21,14 @@ def run(args):
         rng = make_rng(args.seed)
         j = src.joiner()
         gen = src.generate(rng)
-        if N is not None and N > 0:  # выдача блоками: память не растёт с N
+        if N is not None and N > 0: 
             left = N
             while left:
                 k = min(left, 1 << 16)
                 left -= k
                 sys.stdout.write(j.join(itertools.islice(gen, k)) + (j if left else "\n"))
             return 0
-        try:  # бесконечная выдача до Ctrl+C (SIGINT)
+        try: 
             while True:
                 sys.stdout.write(j.join(itertools.islice(gen, 1000)) + j)
                 sys.stdout.flush()
@@ -77,10 +75,9 @@ def run_prob(src, args):
     print(f"1) Pr{{X1..Xr = a}} (с первого такта):   {fmt(p1)}")
     print(f"2) среднее по позициям периода:        {fmt(pavg)}")
 
-    # одна реализация длины max(N, 10^6); оценки для меньших N — по её префиксам
     total = max(N, TABLE_N[-1])
     xs = list(itertools.islice(src.generate(make_rng(args.seed)), total))
-    marks = sorted(m for m in set(TABLE_N) | {N} if m >= r)  # при N < r оценки нет
+    marks = sorted(m for m in set(TABLE_N) | {N} if m >= r)
     counts = {}
     c = 0
     mi = 0
@@ -106,4 +103,3 @@ def run_prob(src, args):
             continue
         print(f"{n:>8}  {fn:>12.6e}  {abs(fn - float(p1)):>12.6e}  {abs(fn - float(pavg)):>12.6e}")
     return 0
-# --- конец сгенерированного фрагмента ---
